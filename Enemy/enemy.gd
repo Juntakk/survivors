@@ -18,23 +18,24 @@ var death_anim = preload("res://Enemy/explosion.tscn")
 var exp_gem = preload("res://Objects/exp_gem.tscn")
 
 signal remove_from_array(object)
+signal hurt_received(damage, angle, knockback_amount)
 
 func _ready():
 	anim.play("walk")
 	hit_box.damage = damage
-	
+
 func _physics_process(_delta):
 	knockback = knockback.move_toward(Vector2.ZERO, knockback_recovery)
-	var direction = global_position.direction_to(player.global_position)
+	var direction = global_position.direction_to(player.global_position).normalized()
 	velocity = direction * movement_speed
 	velocity += knockback
 	move_and_slide()
-	
+
 	if direction.x > 0.1:
 		sprite.flip_h = true
 	elif direction.x < -0.1:
 		sprite.flip_h = false
-	
+
 
 func death():
 	emit_signal('remove_from_array', self)
@@ -49,9 +50,15 @@ func death():
 	queue_free()
 
 func _on_hurt_box_hurt(damage, angle, knockback_amount):
+	var player_position = player.global_position
+	var enemy_position = global_position
+	angle = - enemy_position.direction_to(player_position)
+
 	hp -= damage
-	knockback =  angle * knockback_amount
+	knockback =  angle.normalized() * knockback_amount
 	if hp <= 0:
 		death()
-	else: 
+	else:
 		snd_hit.play()
+		emit_signal("hurt_received", damage, angle.normalized(), knockback_amount)
+

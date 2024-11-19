@@ -23,8 +23,11 @@ var fireShield = preload("res://Player/Attack/fire_shield.tscn")
 @onready var iceSpearAttackTimer = get_node("%IceSpearAttackTimer")
 @onready var tornadoTimer = get_node("%TornadoTimer")
 @onready var tornadoAttackTimer = get_node("%TornadoAttackTimer")
+@onready var shieldTimer = get_node("%ShieldTimer")
+@onready var shieldAttackTimer = get_node("%ShieldAttackTimer")
 @onready var javelinBase = get_node("%JavelinBase")
 @onready var fireShieldBase = get_node("%FireShieldBase")
+@onready var mov = Vector2.ZERO
 
 #IceSpear
 var icespear_ammo = 0
@@ -91,70 +94,70 @@ var speed = 0
 var spell_cd = 0
 var spell_size = 0
 var additional_attacks = 0
-var fireshield_spawn = null
 
 
 func _ready():
-	upgrade_character("icespear1")
+	upgrade_character("fireshield1")
 	attack()
 	set_expbar(exp, calculate_exp_cap())
 	_on_hurt_box_hurt(0,0,0)
 	get_tree().paused = true
 	$GUILayer/GUI/LevelChoices.visible = true
 
-
 func _process(_delta):
 	health_bar.value = hp
 
 func _physics_process(_delta):
 	movement()
-	
+
 func attack():
 	if icespear_level > 0:
 		iceSpearTimer.wait_time = icespear_attackspeed * (1 - spell_cd)
 		if iceSpearTimer.is_stopped():
 			iceSpearTimer.start()
-			
+
 	if tornado_level > 0:
 		tornadoTimer.wait_time = tornado_attackspeed * (1 - spell_cd)
 		if tornadoTimer.is_stopped():
-			tornadoTimer.start()			
-	
+			tornadoTimer.start()
+
 	if javelin_level > 0:
 		spawn_javelin()
-		
+
 	if fireshield_level > 0:
-		spawn_fireshield(fireshield_level)
-			
+		if shieldTimer.is_stopped():
+			shieldTimer.start()
+
 func movement():
 	var x_mov = Input.get_action_strength("right") - Input.get_action_strength("left")
 	var y_mov = Input.get_action_strength("down") - Input.get_action_strength("up")
-	var mov = Vector2(x_mov, y_mov)
-	
+	mov = Vector2(x_mov, y_mov)
+
 	if Input.is_action_just_pressed("dash"):
 		dash.start_dash(dash_length)
+		$DashTimer.start()
+		$CollisionShape2D.disabled = true
+
 	var move_speed = dash_speed if dash.is_dashing() else normal_move_speed
-	
 	#Flip character
 	if mov.x > 0:
 		sprite.flip_h = true
 	elif mov.x < 0:
 		sprite.flip_h = false
-	
+
 	#Walking animation
 	if mov != Vector2.ZERO:
 		last_movement = mov
 		if walk_timer.is_stopped():
 			if sprite.frame >= sprite.hframes -1:
 				sprite.frame = 0
-			else: 
+			else:
 				sprite.frame += 1
 			walk_timer.start()
-	
+
 	velocity = mov.normalized() * move_speed
 	move_and_slide()
-	
-	
+
 func _on_hurt_box_hurt(damage, _angle, _knockback):
 	hp -= clamp(damage - armor, 1.0, 999.0)
 	health_bar.max_value = maxhp
@@ -162,41 +165,62 @@ func _on_hurt_box_hurt(damage, _angle, _knockback):
 	if hp <= 0:
 		death()
 
-func _on_ice_spear_timer_timeout():
+func _on_shield_timer_timeout():
+	if fireshield_level > 0:
+		spawn_fireshield()
+		shieldAttackTimer.start()
+
+func spawn_fireshield():
+	var fireshield_atk = fireShield.instantiate()
+	fireshield_atk.position = position + Vector2(3, 0)
+	fireshield_atk.level = fireshield_level
+	#fireshield_atk.target = get_random_target()
+	fireShieldBase.add_child(fireshield_atk)
+
+func clear_fireshield():
+	for child in fireShieldBase.get_children():
+		fireShieldBase.remove_child(child)
+		child.queue_free()
+
+func _on_shield_attack_timer_timeout():
+	clear_fireshield()
+	shieldTimer.start()
+
+func _on_ice_spear_timer_timeout(): #1.5s
 	icespear_ammo += icespear_baseammo + additional_attacks
 	iceSpearAttackTimer.start()
-	
-func _on_ice_spear_attack_timer_timeout():
+
+func _on_ice_spear_attack_timer_timeout(): #0.075s
 	if icespear_ammo > 0:
 		var icespear_attack = iceSpear.instantiate()
 		icespear_attack.position = position
 		icespear_attack.target = get_random_target()
 		icespear_attack.level = icespear_level
-		
+
 		if icespear_attack.level >= 3:
 			icespear_attack.damage = 8
-			
+
 		spear_dmg_lbl.text =str(icespear_total_dmg)
 		icespear_total_dmg += icespear_attack.damage
-		
+
 		add_child(icespear_attack)
-		
+
 		icespear_ammo -= 1
 		if icespear_ammo > 0:
 			iceSpearAttackTimer.start()
 		else:
 			iceSpearAttackTimer.stop()
-			
+
 func get_random_target():
 	if enemy_close.size() > 0:
 		return enemy_close.pick_random().global_position
 	else:
 		return Vector2.UP
-		
+
 func _on_enemy_detecion_area_body_entered(body):
 	if not enemy_close.has(body):
 		enemy_close.append(body)
-		
+
 func _on_enemy_detecion_area_body_exited(body):
 	if enemy_close.has(body):
 		enemy_close.erase(body)
@@ -212,33 +236,14 @@ func _on_tornado_attack_timer_timeout():
 		tornado_attack.last_movement = last_movement
 		tornado_attack.level = tornado_level
 		add_child(tornado_attack)
-		
+
 		tornado_ammo -= 1
 		if tornado_ammo > 0:
 			tornadoAttackTimer.start()
 		else:
 			tornadoAttackTimer.stop()
-			
-func spawn_fireshield(level = 0):
-	$Attack/ShieldAttackTimer.start()
-	
-	if fireshield_spawn != null:
-		fireshield_spawn.queue_free()
-		fireshield_spawn = null
-	
-	if fireshield_spawn == null:
-		fireshield_spawn = fireShield.instantiate()
-		fireShieldBase.add_child(fireshield_spawn)
-	fireshield_spawn.level = level
-	fireshield_spawn.set_properties_by_level()
-		
-func _on_shield_attack_timer_timeout():
-	if fireshield_spawn != null:
-		fireshield_spawn.level = fireshield_level
-		fireshield_spawn.queue_free()
-		fireshield_spawn = null
-		spawn_fireshield(fireshield_level)
-		
+
+
 func spawn_javelin():
 	var get_javelin_total = javelinBase.get_child_count()
 	var calc_spawns = (javelin_ammo + additional_attacks) - get_javelin_total
@@ -247,13 +252,13 @@ func spawn_javelin():
 		javelin_spawn.global_position = global_position
 		javelinBase.add_child(javelin_spawn)
 		calc_spawns -= 1
-		
+
 	#Update Javelin
 	var get_javelins = javelinBase.get_children()
 	for i in get_javelins:
 		if i.has_method("update_javelin"):
 			i.update_javelin()
-			
+
 func _on_grab_area_area_entered(area):
 	if area.is_in_group("loot"):
 		area.target = self
@@ -277,7 +282,7 @@ func calculate_exp(gem_exp):
 	else:
 		exp += collected_exp
 		collected_exp = 0
-		
+
 	set_expbar(exp, exp_req)
 
 func calculate_exp_cap():
@@ -288,13 +293,13 @@ func calculate_exp_cap():
 		exp_cap + 95 * (exp_level - 19) * 8
 	else:
 		exp_cap = 255 + (exp_level - 39) * 12
-	
+
 	return exp_cap
 
 func set_expbar(set_value = 1, set_max_value = 100):
 	exp_bar.value = set_value
 	exp_bar.max_value = set_max_value
-	
+
 func levelup():
 	sndLevelUp.play()
 	lbl_lvl.text = str("Level: ", exp_level)
@@ -309,9 +314,9 @@ func levelup():
 		option_choice.item = get_random_item()
 		upgradeOptions.add_child(option_choice)
 		options += 1
-	
+
 	get_tree().paused = true
-	
+
 func upgrade_character(upgrade):
 	match upgrade:
 		"icespear1":
@@ -354,20 +359,20 @@ func upgrade_character(upgrade):
 			spell_size += 0.10
 		"scroll1","scroll2","scroll3","scroll4":
 			spell_cd += 0.05
-		"fireshield1": 
-			fireshield_level = 1 
+		"fireshield1":
+			fireshield_level = 1
 		"fireshield2":
 			fireshield_level = 2
 		"fireshield3":
-			fireshield_level = 3 
+			fireshield_level = 3
 		"fireshield4":
-			fireshield_level = 4 
+			fireshield_level = 4
 		"ring1","ring2":
 			additional_attacks += 1
 		"food":
 			hp += 20
 			hp = clamp(hp,0,maxhp)
-			
+
 	adjust_gui_collection(upgrade)
 	attack()
 	var option_children = upgradeOptions.get_children()
@@ -378,9 +383,9 @@ func upgrade_character(upgrade):
 	levelPanel.visible = false
 	levelPanel.position = Vector2(800,50)
 	get_tree().paused = false
-	calculate_exp(0) 
-	#spawn_fireshield(fireshield_level)
-	
+	calculate_exp(0)
+
+
 func get_random_item():
 	var dblist = []
 	for i in UpgradeDb.UPGRADES:
@@ -395,7 +400,7 @@ func get_random_item():
 				var to_add = true
 				if not n in collected_upgrades:
 					to_add = false
-					if to_add: 
+					if to_add:
 						dblist.append(i)
 				else:
 					dblist.append(i)
@@ -404,7 +409,7 @@ func get_random_item():
 	if dblist.size() > 0:
 		var random_item = dblist.pick_random()
 		upgrade_options.append(random_item)
-		
+
 		return random_item
 	else:
 		return null
@@ -413,13 +418,13 @@ func change_time(argtime = 0):
 	time = argtime
 	var get_m = int(time/60.0)
 	var get_s = time % 60
-	
+
 	if get_m < 10:
 		get_m = str(0, get_m)
 	if get_s < 10:
 		get_s = str(0, get_s)
 	lblTimer.text = str(get_m, ":", get_s)
-		
+
 func adjust_gui_collection(upgrade):
 	var get_upgraded_displaynames = UpgradeDb.UPGRADES[upgrade]["displayname"]
 	var get_type = UpgradeDb.UPGRADES[upgrade]["type"]
@@ -446,13 +451,13 @@ func death():
 	tween.tween_property(deathPanel, "position", Vector2(220, 50),3.0).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
 	tween2.tween_property(collectedWeapons, "position", Vector2(240,140), 3.0).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
 	tween3.tween_property(collectedUpgrades, "position", Vector2(240,160), 3.0).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
-	if time >= 300: 
+	if time >= 300:
 		lblResult.text = "You win"
 		sndVictory.play()
 	else:
 		lblResult.text = "You lose"
 		sndLoss.play()
-	
+
 func _input(event):
 	if event.is_action_pressed("menu"):
 		if get_tree().paused == false:
@@ -481,3 +486,6 @@ func _on_lvl_2_btn_pressed():
 	get_tree().paused = false
 	$"../MainMusic2".play()
 
+
+func _on_dash_timer_timeout():
+	$CollisionShape2D.disabled = false

@@ -8,7 +8,7 @@ var spr_red = preload("res://Textures/Items/Gems/Gem_red.png")
 var magnet = preload("res://Objects/magnet.png")
 
 var target = null
-var speed = -1.75
+var speed = -2
 
 @onready var sprite = $Sprite2D
 @onready var collision = $CollisionShape2D
@@ -31,7 +31,7 @@ func _ready():
 func _physics_process(delta):
 	if target != null:
 		global_position = global_position.move_toward(target.global_position, speed)
-		speed += 5.5 * delta
+		speed += 6.5 * delta
 
 func random_chance():
 	var chance = randi() % 100 + 1

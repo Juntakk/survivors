@@ -42,15 +42,15 @@ func update_javelin():
 			knockback_amount = 100
 			paths = 1
 			attack_size = 1.0 * (1 + player.spell_size)
-			attack_speed = 5.0 * (1 - player.spell_cd) 
+			attack_speed = 5.0 * (1 - player.spell_cd)
 		2:
 			hp = 9999
 			speed = 200.0
 			damage = 10
 			knockback_amount = 100
 			paths = 2
-			attack_size = 1.0 * (1 + player.spell_size) 
-			attack_speed = 5.0 * (1 - player.spell_cd)  
+			attack_size = 1.0 * (1 + player.spell_size)
+			attack_speed = 5.0 * (1 - player.spell_cd)
 		3:
 			hp = 9999
 			speed = 200.0
@@ -58,16 +58,16 @@ func update_javelin():
 			knockback_amount = 100
 			paths = 3
 			attack_size = 1.0 * (1 + player.spell_size)
-			attack_speed = 5.0 * (1 - player.spell_cd)  
+			attack_speed = 5.0 * (1 - player.spell_cd)
 		4:
 			hp = 9999
 			speed = 200.0
 			damage = 15
 			knockback_amount = 120
 			paths = 5
-			attack_size = 1.0 * (1 + player.spell_size) 
-			attack_speed = 5.0 * (1 - player.spell_cd)  
-			
+			attack_size = 1.0 * (1 + player.spell_size)
+			attack_speed = 5.0 * (1 - player.spell_cd)
+
 	scale = Vector2(1.0,1.0) * attack_size
 	attackTimer.wait_time = attack_speed
 
@@ -96,7 +96,7 @@ func add_paths():
 	enable_attack(true)
 	target = target_array[0]
 	process_path()
-	
+
 func process_path():
 	angle = global_position.direction_to(target)
 	changeDirectionTimer.start()

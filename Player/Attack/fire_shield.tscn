@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://Player/Attack/fire_shield.gd" id="1_i4cd1"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ullfl"]
-radius = 33.0
+radius = 32.0156
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vq1pd"]
 atlas = ExtResource("1_b86hv")
@@ -58,14 +58,15 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3xd3w")
 }],
-"loop": true,
+"loop": false,
 "name": &"base",
-"speed": 10.0
+"speed": 5.0
 }]
 
 [node name="FireShield" type="Area2D" groups=["attack"]]
-collision_layer = 4
-collision_mask = 0
+position = Vector2(0, 1)
+collision_layer = 5
+collision_mask = 5
 script = ExtResource("1_i4cd1")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -74,3 +75,5 @@ shape = SubResource("CircleShape2D_ullfl")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_e1nwy")
 animation = &"base"
+frame = 6
+frame_progress = 1.0
