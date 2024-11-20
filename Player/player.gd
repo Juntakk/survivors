@@ -6,6 +6,7 @@ var dash_length = 0.1
 var hp = 80
 var maxhp = 80
 var last_movement = Vector2.UP
+var time2 = 0.0
 
 var exp = 0
 var exp_level = 1
@@ -17,6 +18,11 @@ var iceSpear = preload("res://Player/Attack/ice_spear.tscn")
 var tornado = preload("res://Player/Attack/tornado.tscn")
 var javelin = preload("res://Player/Attack/javelin.tscn")
 var fireShield = preload("res://Player/Attack/fire_shield.tscn")
+
+#Character
+var warrior = preload("res://Textures/Player/41.png")
+var sorceress = preload("res://Textures/Player/21.png")
+var brute = preload("res://Textures/Player/85.png")
 
 #Attack Nodes
 @onready var iceSpearTimer = get_node("%IceSpearTimer")
@@ -102,13 +108,13 @@ func _ready():
 	set_expbar(exp, calculate_exp_cap())
 	_on_hurt_box_hurt(0,0,0)
 	get_tree().paused = true
-	$GUILayer/GUI/LevelChoices.visible = true
-
+	$GUILayer/GUI/CharacterChoices.visible = true
+	
 func _process(_delta):
 	health_bar.value = hp
 
-func _physics_process(_delta):
-	movement()
+func _physics_process(delta):
+	movement(delta)
 
 func attack():
 	if icespear_level > 0:
@@ -128,11 +134,15 @@ func attack():
 		if shieldTimer.is_stopped():
 			shieldTimer.start()
 
-func movement():
+func movement(delta):
 	var x_mov = Input.get_action_strength("right") - Input.get_action_strength("left")
 	var y_mov = Input.get_action_strength("down") - Input.get_action_strength("up")
 	mov = Vector2(x_mov, y_mov)
-
+	
+	time2 += delta
+	scale.y = 1.0 + 0.04 * sin(time2 * 5)  
+	scale.x = 1.0 + 0.03 * sin(time2 * 5) 
+	
 	if Input.is_action_just_pressed("dash"):
 		dash.start_dash(dash_length)
 		$DashTimer.start()
@@ -141,18 +151,19 @@ func movement():
 	var move_speed = dash_speed if dash.is_dashing() else normal_move_speed
 	#Flip character
 	if mov.x > 0:
-		sprite.flip_h = true
-	elif mov.x < 0:
 		sprite.flip_h = false
+	elif mov.x < 0:
+		sprite.flip_h = true
+	
 
 	#Walking animation
 	if mov != Vector2.ZERO:
 		last_movement = mov
 		if walk_timer.is_stopped():
-			if sprite.frame >= sprite.hframes -1:
-				sprite.frame = 0
-			else:
-				sprite.frame += 1
+			#if sprite.frame >= sprite.hframes -1:
+				#sprite.frame = 0
+			#else:
+				#sprite.frame += 1
 			walk_timer.start()
 
 	velocity = mov.normalized() * move_speed
@@ -489,3 +500,22 @@ func _on_lvl_2_btn_pressed():
 
 func _on_dash_timer_timeout():
 	$CollisionShape2D.disabled = false
+
+
+func _on_warrior_btn_pressed() -> void:
+	$GUILayer/GUI/CharacterChoices.visible = false
+	$GUILayer/GUI/LevelChoices.visible = true
+	sprite.texture = warrior
+
+func _on_sorceress_btn_pressed() -> void:
+	$GUILayer/GUI/CharacterChoices.visible = false
+	$GUILayer/GUI/LevelChoices.visible = true
+	sprite.texture = sorceress
+
+
+func _on_brute_btn_pressed() -> void:
+	$GUILayer/GUI/CharacterChoices.visible = false
+	$GUILayer/GUI/LevelChoices.visible = true
+	sprite.texture = brute
+	sprite.flip_h = false
+	

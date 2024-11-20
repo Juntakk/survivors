@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://x1bglugvysh"]
 
-[ext_resource type="Script" path="res://Dash.gd" id="1_wjtr1"]
+[ext_resource type="Script" path="res://Player/Dash.gd" id="1_wjtr1"]
 [ext_resource type="AudioStream" uid="uid://cxevn010rgsm0" path="res://Audio/SoundEffect/slow-wind-sound-effect-108401 (1).mp3" id="2_kkkxs"]
 
 [node name="Dash" type="Node2D"]
