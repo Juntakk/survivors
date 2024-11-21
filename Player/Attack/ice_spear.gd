@@ -18,6 +18,7 @@ signal remove_from_array(object)
 func _ready():
 	angle = global_position.direction_to(target)
 	rotation = angle.angle() + deg_to_rad(135)
+	print(angle)
 	match level:
 		1:
 			hp = 1

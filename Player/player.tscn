@@ -16,10 +16,11 @@
 [ext_resource type="Texture2D" uid="uid://cy1i6wwcdjsju" path="res://Textures/Player/85.png" id="14_hjf72"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_afney"]
-height = 34.0
+radius = 6.0
+height = 26.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_b25qc"]
-size = Vector2(16, 31)
+size = Vector2(29, 41)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_m3jpk"]
 radius = 367.935
@@ -31,7 +32,6 @@ radius = 38.0
 radius = 15.0333
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
-z_index = 1
 collision_layer = 3
 collision_mask = 3
 script = ExtResource("1_spsy0")
@@ -39,14 +39,13 @@ metadata/_edit_vertical_guides_ = [-259.0]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 z_index = 1
-position = Vector2(-0.125002, -3.75)
+position = Vector2(-0.999998, -3.8147e-06)
 scale = Vector2(0.66, 0.66)
 texture = ExtResource("12_305ob")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
 shape = SubResource("CapsuleShape2D_afney")
 
 [node name="WalkTimer" type="Timer" parent="."]
@@ -55,13 +54,12 @@ wait_time = 0.2
 one_shot = true
 
 [node name="HurtBox" parent="." instance=ExtResource("2_ukmmx")]
-visible = false
-position = Vector2(-42, -9)
+position = Vector2(-43, -7)
 collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionShape2D" parent="HurtBox" index="0"]
-position = Vector2(42, 8)
+position = Vector2(42.5, 9.5)
 shape = SubResource("RectangleShape2D_b25qc")
 
 [node name="Attack" type="Node2D" parent="."]
@@ -104,7 +102,6 @@ collision_mask = 4
 monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyDetecionArea"]
-visible = false
 shape = SubResource("CircleShape2D_m3jpk")
 
 [node name="GrabArea" type="Area2D" parent="." groups=["playerGrabArea"]]
@@ -115,6 +112,28 @@ collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GrabArea"]
 shape = SubResource("CircleShape2D_4nvlb")
+
+[node name="HealthBar" type="TextureProgressBar" parent="." groups=["ui"]]
+unique_name_in_owner = true
+light_mask = 4
+visibility_layer = 4
+y_sort_enabled = true
+layout_direction = 2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -17.0
+offset_top = 25.0
+offset_right = 15.0
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 100.0
+texture_under = ExtResource("8_od2uq")
+texture_progress = ExtResource("8_gecpu")
+texture_progress_offset = Vector2(0, -9)
 
 [node name="CollectArea" type="Area2D" parent="."]
 visible = false
@@ -130,15 +149,18 @@ shape = SubResource("CircleShape2D_ix6sk")
 [node name="GUI" type="Control" parent="GUILayer"]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 3.0
-offset_right = 643.0
-offset_bottom = 360.0
+offset_left = 2.0
+offset_top = 1.0
+offset_right = 642.0
+offset_bottom = 361.0
 
 [node name="ExpBar" type="TextureProgressBar" parent="GUILayer/GUI"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_right = 640.0
-offset_bottom = 40.0
+offset_left = -4.0
+offset_top = -2.0
+offset_right = 636.0
+offset_bottom = 38.0
 texture_under = ExtResource("4_3pv1k")
 texture_over = ExtResource("4_3pv1k")
 texture_progress = ExtResource("5_xb1yt")
@@ -154,19 +176,6 @@ theme_override_font_sizes/font_size = 16
 text = "Level: 1"
 horizontal_alignment = 1
 vertical_alignment = 2
-
-[node name="HealthBar" type="TextureProgressBar" parent="GUILayer/GUI"]
-unique_name_in_owner = true
-self_modulate = Color(1, 1, 1, 0.784314)
-layout_mode = 0
-offset_left = 304.0
-offset_top = 200.0
-offset_right = 336.0
-offset_bottom = 208.0
-value = 100.0
-texture_under = ExtResource("8_od2uq")
-texture_progress = ExtResource("8_gecpu")
-texture_progress_offset = Vector2(0, -9)
 
 [node name="LevelUp" type="Panel" parent="GUILayer/GUI"]
 unique_name_in_owner = true
@@ -212,7 +221,7 @@ offset_left = 230.0
 offset_top = 49.0
 offset_right = 430.0
 offset_bottom = 299.0
-color = Color(0.633566, 0.333312, 0.241836, 1)
+color = Color(0.329412, 0.545098, 0.337255, 1)
 
 [node name="lbl_result" type="Label" parent="GUILayer/GUI/DeathPanel"]
 unique_name_in_owner = true
@@ -372,6 +381,7 @@ offset_bottom = 231.0
 text = "Library Level"
 
 [node name="CharacterChoices" type="ColorRect" parent="GUILayer/GUI"]
+visible = false
 layout_mode = 0
 offset_left = -6.0
 offset_top = -3.0

@@ -55,6 +55,9 @@ var tornado_level = 0
 var javelin_ammo = 0
 var javelin_level = 0
 
+var tree = preload("res://Objects/swirling_tree.tscn")
+var tree_instance = tree.instantiate()
+
 var enemy_close = []
 
 @onready var sprite = $Sprite2D
@@ -103,13 +106,13 @@ var additional_attacks = 0
 
 
 func _ready():
-	upgrade_character("fireshield1")
+	upgrade_character("icespear1")
 	attack()
 	set_expbar(exp, calculate_exp_cap())
 	_on_hurt_box_hurt(0,0,0)
 	get_tree().paused = true
 	$GUILayer/GUI/CharacterChoices.visible = true
-	
+
 func _process(_delta):
 	health_bar.value = hp
 
@@ -138,11 +141,11 @@ func movement(delta):
 	var x_mov = Input.get_action_strength("right") - Input.get_action_strength("left")
 	var y_mov = Input.get_action_strength("down") - Input.get_action_strength("up")
 	mov = Vector2(x_mov, y_mov)
-	
-	time2 += delta
-	scale.y = 1.0 + 0.04 * sin(time2 * 5)  
-	scale.x = 1.0 + 0.03 * sin(time2 * 5) 
-	
+
+	#time2 += delta
+	#rotation = 0.02 * sin(time2 * 5)
+	#scale.x = 1.0 + 0.03 * sin(time2 * 5)
+
 	if Input.is_action_just_pressed("dash"):
 		dash.start_dash(dash_length)
 		$DashTimer.start()
@@ -154,7 +157,7 @@ func movement(delta):
 		sprite.flip_h = false
 	elif mov.x < 0:
 		sprite.flip_h = true
-	
+
 
 	#Walking animation
 	if mov != Vector2.ZERO:
@@ -518,4 +521,4 @@ func _on_brute_btn_pressed() -> void:
 	$GUILayer/GUI/LevelChoices.visible = true
 	sprite.texture = brute
 	sprite.flip_h = false
-	
+

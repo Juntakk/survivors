@@ -32,7 +32,7 @@ func _on_enemy_hurt(damage, angle, knockback_amount):
 func set_properties_by_level():
 	match level:
 		1:
-			damage = 5
+			damage = 4
 			knockback_amount = 200
 			attack_size = 1 * (1 + player.spell_size)
 			damageSize = 0.75 * (1 + player.spell_size)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://d4e5wfe3wtggp"]
+[gd_scene load_steps=24 format=3 uid="uid://d4e5wfe3wtggp"]
 
 [ext_resource type="Texture2D" uid="uid://cx1vec7a0gus0" path="res://Textures/dirt_full_new.png" id="1_sawoq"]
 [ext_resource type="Texture2D" uid="uid://bcswa2l3da3l7" path="res://Textures/FieldsTile_11.png" id="2_dl2l0"]
@@ -13,6 +13,7 @@
 [ext_resource type="AudioStream" uid="uid://dufgm8337eo3n" path="res://Audio/Music/battleThemeA.mp3" id="10_k5bmo"]
 [ext_resource type="Script" path="res://Audio/Music/MainMusic.gd" id="11_jo3it"]
 [ext_resource type="AudioStream" uid="uid://bkmkjisol18tq" path="res://Audio/Music/epic-battle-song-182915.mp3" id="12_0ygi5"]
+[ext_resource type="PackedScene" uid="uid://uryt682oe41v" path="res://Objects/swirling_tree.tscn" id="14_djgt5"]
 
 [sub_resource type="Resource" id="Resource_7cnst"]
 script = ExtResource("5_b6od3")
@@ -104,6 +105,7 @@ region_enabled = true
 region_rect = Rect2(-4000, -4000, 4000, 4000)
 
 [node name="Player" parent="." instance=ExtResource("2_h0glj")]
+position = Vector2(2, -5)
 motion_mode = 1
 
 [node name="EnemySpawner" parent="." instance=ExtResource("3_bu4xh")]
@@ -123,5 +125,8 @@ process_mode = 3
 stream = ExtResource("12_0ygi5")
 volume_db = -15.0
 script = ExtResource("11_jo3it")
+
+[node name="SwirlingTree" parent="." instance=ExtResource("14_djgt5")]
+position = Vector2(-73, 27)
 
 [connection signal="playerdeath" from="Player" to="MainMusic" method="_on_player_playerdeath"]
