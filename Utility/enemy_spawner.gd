@@ -5,6 +5,7 @@ extends Node2D
 @onready var player = get_tree().get_first_node_in_group("player")
 
 @export var time = 0
+@onready var background = $"../Background"
 
 signal change_time(time)
 
@@ -30,34 +31,22 @@ func _on_timer_timeout():
 					counter += 1
 	emit_signal("change_time", time)
 
-
 func get_random_position():
-	var vpr = get_viewport_rect().size * randf_range(1.1, 1.4)
-	var top_left = Vector2(player.global_position.x - vpr.x / 2, player.global_position.y - vpr.y / 2)
-	var top_right = Vector2(player.global_position.x + vpr.x / 2, player.global_position.y - vpr.y / 2)
-	var bottom_left = Vector2(player.global_position.x - vpr.x / 2, player.global_position.y + vpr.y / 2)
-	var bottom_right = Vector2(player.global_position.x + vpr.x / 2, player.global_position.y + vpr.y / 2)
+	# Use the region rect if region_enabled; otherwise, fallback to full texture size
+	var region = background.region_rect if background.region_enabled else Rect2(Vector2.ZERO, background.texture.get_size())
 
-	var pos_side = ["up", "down", "right", "left"].pick_random()
+	# Correct for centered offset
+	var half_size = (region.size * background.global_scale) / 2.0
+	var center = (background.global_transform.origin + (region.position * background.global_scale)) + Vector2(4000,4000)
 
-	var spawn_pos1 = Vector2.ZERO
-	var spawn_pos2 = Vector2.ZERO
+	# Calculate top-left and bottom-right corners
+	var top_left = center - half_size + Vector2(50, 50)
+	var bottom_right = center + half_size - Vector2(50, 50)
 
-	match pos_side:
-		"up":
-			spawn_pos1 = top_left
-			spawn_pos2 = top_right
-		"down":
-			spawn_pos1 = bottom_left
-			spawn_pos2 = bottom_right
-		"right":
-			spawn_pos1 = top_right
-			spawn_pos2 = bottom_right
-		"left":
-			spawn_pos1 = top_left
-			spawn_pos2 = bottom_left
+	# Generate a random position within these bounds
+	var x_spawn = randf_range(top_left.x, bottom_right.x)
+	var y_spawn = randf_range(top_left.y, bottom_right.y)
 
-	var x_spawn = randf_range(spawn_pos1.x, spawn_pos2.x)
-	var y_spawn = randf_range(spawn_pos1.y, spawn_pos2.y)
+	return Vector2(x_spawn, y_spawn)
 
-	return Vector2(x_spawn,y_spawn)
+

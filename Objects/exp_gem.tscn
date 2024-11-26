@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://cq0opp35xkds1"]
+[gd_scene load_steps=7 format=3 uid="uid://cq0opp35xkds1"]
 
 [ext_resource type="Texture2D" uid="uid://bbymxi5tkr4n1" path="res://Textures/Items/Gems/Gem_green.png" id="1_aslve"]
 [ext_resource type="Script" path="res://Objects/exp_gem.gd" id="1_e7ge2"]
 [ext_resource type="AudioStream" uid="uid://bdudqx6hws1fe" path="res://Audio/SoundEffect/8-bit-laser-151672.mp3" id="3_10y6y"]
 [ext_resource type="AudioStream" uid="uid://bkgh4qw0t3sic" path="res://Audio/SoundEffect/collectgem.mp3" id="3_t51xd"]
+[ext_resource type="AudioStream" uid="uid://d1ceqmeqai8xt" path="res://Audio/SoundEffect/carrotnom-92106.mp3" id="5_8ig3b"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dvh4c"]
 size = Vector2(8, 9.75)
@@ -36,4 +37,19 @@ process_callback = 0
 wait_time = 4.303
 one_shot = true
 
+[node name="food_snd" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_8ig3b")
+
+[node name="health_gain_lbl" type="Label" parent="."]
+unique_name_in_owner = true
+self_modulate = Color(0.828712, 0.680306, 0.026542, 1)
+z_index = 1
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="FoodLblTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+one_shot = true
+
 [connection signal="timeout" from="TestTimer" to="." method="_on_test_timer_timeout"]
+[connection signal="timeout" from="FoodLblTimer" to="." method="_on_food_lbl_timer_timeout"]

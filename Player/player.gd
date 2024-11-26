@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-var normal_move_speed = 100.0
+var normal_move_speed = 1500.0
 var dash_speed = 500
 var dash_length = 0.1
 var hp = 80
@@ -55,9 +55,6 @@ var tornado_level = 0
 var javelin_ammo = 0
 var javelin_level = 0
 
-var tree = preload("res://Objects/swirling_tree.tscn")
-var tree_instance = tree.instantiate()
-
 var enemy_close = []
 
 @onready var sprite = $Sprite2D
@@ -94,6 +91,7 @@ var enemy_close = []
 signal playerdeath
 
 @onready var spear_dmg_lbl = get_node("%SpearDmgLbl")
+
 
 #Upgrades
 var collected_upgrades = []
@@ -142,9 +140,9 @@ func movement(delta):
 	var y_mov = Input.get_action_strength("down") - Input.get_action_strength("up")
 	mov = Vector2(x_mov, y_mov)
 
-	#time2 += delta
-	#rotation = 0.02 * sin(time2 * 5)
-	#scale.x = 1.0 + 0.03 * sin(time2 * 5)
+	time2 += delta
+	sprite.rotation = 0.02 * sin(time2 * 5)
+	sprite.scale.x = 1.0 + 0.03 * sin(time2 * 5)
 
 	if Input.is_action_just_pressed("dash"):
 		dash.start_dash(dash_length)
@@ -256,7 +254,6 @@ func _on_tornado_attack_timer_timeout():
 			tornadoAttackTimer.start()
 		else:
 			tornadoAttackTimer.stop()
-
 
 func spawn_javelin():
 	var get_javelin_total = javelinBase.get_child_count()
@@ -399,7 +396,6 @@ func upgrade_character(upgrade):
 	get_tree().paused = false
 	calculate_exp(0)
 
-
 func get_random_item():
 	var dblist = []
 	for i in UpgradeDb.UPGRADES:
@@ -500,10 +496,8 @@ func _on_lvl_2_btn_pressed():
 	get_tree().paused = false
 	$"../MainMusic2".play()
 
-
 func _on_dash_timer_timeout():
 	$CollisionShape2D.disabled = false
-
 
 func _on_warrior_btn_pressed() -> void:
 	$GUILayer/GUI/CharacterChoices.visible = false
@@ -514,7 +508,6 @@ func _on_sorceress_btn_pressed() -> void:
 	$GUILayer/GUI/CharacterChoices.visible = false
 	$GUILayer/GUI/LevelChoices.visible = true
 	sprite.texture = sorceress
-
 
 func _on_brute_btn_pressed() -> void:
 	$GUILayer/GUI/CharacterChoices.visible = false

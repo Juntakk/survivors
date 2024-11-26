@@ -22,7 +22,7 @@ func _ready():
 	for node in get_tree().get_nodes_in_group("enemy"):
 		if node is CharacterBody2D and node.has_signal("hurt_received"):
 			node.connect("hurt_received", Callable(self, "_on_enemy_hurt"))
-	print(base_angle)
+
 func _process(_delta):
 	global_position = player.global_position + Vector2(0,3)
 

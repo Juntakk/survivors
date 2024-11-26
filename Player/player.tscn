@@ -16,11 +16,11 @@
 [ext_resource type="Texture2D" uid="uid://cy1i6wwcdjsju" path="res://Textures/Player/85.png" id="14_hjf72"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_afney"]
-radius = 6.0
-height = 26.0
+radius = 13.0
+height = 46.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_b25qc"]
-size = Vector2(29, 41)
+size = Vector2(38.25, 55)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_m3jpk"]
 radius = 367.935
@@ -46,6 +46,8 @@ texture = ExtResource("12_305ob")
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(0, 3)
 shape = SubResource("CapsuleShape2D_afney")
 
 [node name="WalkTimer" type="Timer" parent="."]
@@ -54,12 +56,12 @@ wait_time = 0.2
 one_shot = true
 
 [node name="HurtBox" parent="." instance=ExtResource("2_ukmmx")]
-position = Vector2(-43, -7)
+position = Vector2(-89, 17)
 collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionShape2D" parent="HurtBox" index="0"]
-position = Vector2(42.5, 9.5)
+position = Vector2(89.125, -16.5)
 shape = SubResource("RectangleShape2D_b25qc")
 
 [node name="Attack" type="Node2D" parent="."]
@@ -124,9 +126,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -17.0
+offset_left = -15.0
 offset_top = 25.0
-offset_right = 15.0
+offset_right = 17.0
 offset_bottom = 33.0
 grow_horizontal = 2
 grow_vertical = 2
