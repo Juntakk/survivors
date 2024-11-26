@@ -15,7 +15,6 @@ func _ready():
 	randomize()
 	for i in range(100):
 		var tree_instance = tree.instantiate()
-		#add_child(tree_instance)
 		trees.append(tree_instance)
 	spawn_trees()
 
@@ -44,9 +43,6 @@ func _on_hurt_box_hurt(damage, angle, knockback):
 	hit_snd.play()
 	$Sprite2D.self_modulate = Color(255,255,255,255)
 	$TreeHitTimer.start()
-
-
-
 
 func _on_dmg_show_timer_timeout():
 	dmgLbl.text = ""
