@@ -27,7 +27,7 @@
 <table>
   <tr>
     <td>
-      <img src="screenshots/survivors1.png" alt="Gameplay Screenshot 1" width="333">
+      <img src="screenshots/survivors1.png" alt="Gameplay Screenshot 1" width="888">
     </td>
     <td>
       <b>Gameplay Screenshot 1:</b>
@@ -38,7 +38,7 @@
   </tr>
   <tr>
     <td>
-      <img src="screenshots/survivors2.png" alt="Gameplay Screenshot 2" width="333">
+      <img src="screenshots/survivors2.png" alt="Gameplay Screenshot 2" width="888">
     </td>
     <td>
       <b>Gameplay Screenshot 2:</b>
