@@ -1,0 +1,468 @@
+[gd_scene load_steps=20 format=3 uid="uid://daqmaa1uywt4f"]
+
+[ext_resource type="Script" path="res://Player/player.gd" id="1_spsy0"]
+[ext_resource type="PackedScene" uid="uid://dxt56k6s6nlte" path="res://Utility/hurt_box.tscn" id="2_ukmmx"]
+[ext_resource type="Texture2D" uid="uid://cpj4n2lssf81r" path="res://Textures/GUI/exp_background.png" id="4_3pv1k"]
+[ext_resource type="Texture2D" uid="uid://8e8fd74eqnp1" path="res://Textures/GUI/exp_progress.png" id="5_xb1yt"]
+[ext_resource type="FontFile" uid="uid://db6ido2fvnq48" path="res://Font/tenderness.otf" id="6_r46ur"]
+[ext_resource type="AudioStream" uid="uid://bxlqcc7s2m023" path="res://Audio/SoundEffect/levelup.ogg" id="7_kxe6q"]
+[ext_resource type="Texture2D" uid="uid://d2imivv0twxcy" path="res://Textures/GUI/healthbar_full.png" id="8_gecpu"]
+[ext_resource type="Texture2D" uid="uid://dohnfr5vrbehy" path="res://Textures/GUI/healthbar.png" id="8_od2uq"]
+[ext_resource type="AudioStream" uid="uid://c38sl3hfn4uau" path="res://Audio/SoundEffect/Victory.wav" id="10_jhb4q"]
+[ext_resource type="AudioStream" uid="uid://diyqgc6jmi8mp" path="res://Audio/SoundEffect/Lose.ogg" id="11_kibj6"]
+[ext_resource type="Texture2D" uid="uid://bkkqy01bt5bpj" path="res://Textures/Player/41.png" id="12_305ob"]
+[ext_resource type="PackedScene" uid="uid://x1bglugvysh" path="res://Player/dash.tscn" id="12_wsret"]
+[ext_resource type="Texture2D" uid="uid://c02qr5no07njk" path="res://Textures/Player/21.png" id="13_yq5rq"]
+[ext_resource type="Texture2D" uid="uid://cy1i6wwcdjsju" path="res://Textures/Player/85.png" id="14_hjf72"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_afney"]
+radius = 13.0
+height = 46.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_b25qc"]
+size = Vector2(38.25, 55)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_m3jpk"]
+radius = 367.935
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_4nvlb"]
+radius = 38.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ix6sk"]
+radius = 15.0333
+
+[node name="Player" type="CharacterBody2D" groups=["player"]]
+collision_layer = 3
+collision_mask = 3
+script = ExtResource("1_spsy0")
+metadata/_edit_vertical_guides_ = [-259.0]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 1
+position = Vector2(-0.999998, -3.8147e-06)
+scale = Vector2(0.66, 0.66)
+texture = ExtResource("12_305ob")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(0, 3)
+shape = SubResource("CapsuleShape2D_afney")
+
+[node name="WalkTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 0.2
+one_shot = true
+
+[node name="HurtBox" parent="." instance=ExtResource("2_ukmmx")]
+position = Vector2(-89, 17)
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" parent="HurtBox" index="0"]
+position = Vector2(89.125, -16.5)
+shape = SubResource("RectangleShape2D_b25qc")
+
+[node name="Attack" type="Node2D" parent="."]
+
+[node name="IceSpearTimer" type="Timer" parent="Attack"]
+unique_name_in_owner = true
+wait_time = 1.5
+
+[node name="IceSpearAttackTimer" type="Timer" parent="Attack/IceSpearTimer"]
+unique_name_in_owner = true
+wait_time = 0.075
+
+[node name="ShieldTimer" type="Timer" parent="Attack"]
+unique_name_in_owner = true
+wait_time = 2.0
+one_shot = true
+
+[node name="ShieldAttackTimer" type="Timer" parent="Attack/ShieldTimer"]
+unique_name_in_owner = true
+one_shot = true
+
+[node name="TornadoTimer" type="Timer" parent="Attack"]
+unique_name_in_owner = true
+wait_time = 3.0
+
+[node name="TornadoAttackTimer" type="Timer" parent="Attack/TornadoTimer"]
+unique_name_in_owner = true
+wait_time = 0.2
+
+[node name="JavelinBase" type="Node2D" parent="Attack"]
+unique_name_in_owner = true
+
+[node name="FireShieldBase" type="Node2D" parent="Attack"]
+unique_name_in_owner = true
+
+[node name="EnemyDetecionArea" type="Area2D" parent="."]
+visible = false
+collision_layer = 4
+collision_mask = 4
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyDetecionArea"]
+shape = SubResource("CircleShape2D_m3jpk")
+
+[node name="GrabArea" type="Area2D" parent="." groups=["playerGrabArea"]]
+visible = false
+position = Vector2(1, 0)
+collision_layer = 0
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GrabArea"]
+shape = SubResource("CircleShape2D_4nvlb")
+
+[node name="HealthBar" type="TextureProgressBar" parent="." groups=["ui"]]
+unique_name_in_owner = true
+light_mask = 4
+visibility_layer = 4
+y_sort_enabled = true
+layout_direction = 2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -15.0
+offset_top = 25.0
+offset_right = 17.0
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 100.0
+texture_under = ExtResource("8_od2uq")
+texture_progress = ExtResource("8_gecpu")
+texture_progress_offset = Vector2(0, -9)
+
+[node name="CollectArea" type="Area2D" parent="."]
+visible = false
+collision_layer = 0
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollectArea"]
+position = Vector2(0, -2)
+shape = SubResource("CircleShape2D_ix6sk")
+
+[node name="GUILayer" type="CanvasLayer" parent="."]
+
+[node name="GUI" type="Control" parent="GUILayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 2.0
+offset_top = 1.0
+offset_right = 642.0
+offset_bottom = 361.0
+
+[node name="ExpBar" type="TextureProgressBar" parent="GUILayer/GUI"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = -4.0
+offset_top = -2.0
+offset_right = 636.0
+offset_bottom = 38.0
+texture_under = ExtResource("4_3pv1k")
+texture_over = ExtResource("4_3pv1k")
+texture_progress = ExtResource("5_xb1yt")
+
+[node name="lbl_lvl" type="Label" parent="GUILayer/GUI/ExpBar"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 540.0
+offset_right = 640.0
+offset_bottom = 20.0
+theme_override_fonts/font = ExtResource("6_r46ur")
+theme_override_font_sizes/font_size = 16
+text = "Level: 1"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="LevelUp" type="Panel" parent="GUILayer/GUI"]
+unique_name_in_owner = true
+process_mode = 2
+visible = false
+layout_mode = 0
+offset_left = 800.0
+offset_top = 50.0
+offset_right = 1000.0
+offset_bottom = 300.0
+
+[node name="lbl_levelUP" type="Label" parent="GUILayer/GUI/LevelUp"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 50.0
+theme_override_fonts/font = ExtResource("6_r46ur")
+theme_override_font_sizes/font_size = 16
+text = "Level Up !
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="UpgradeOptions" type="VBoxContainer" parent="GUILayer/GUI/LevelUp"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 10.0
+offset_top = 50.0
+offset_right = 190.0
+offset_bottom = 100.0
+
+[node name="snd_levelup" type="AudioStreamPlayer" parent="GUILayer/GUI/LevelUp"]
+unique_name_in_owner = true
+stream = ExtResource("7_kxe6q")
+volume_db = -14.634
+
+[node name="DeathPanel" type="ColorRect" parent="GUILayer/GUI"]
+unique_name_in_owner = true
+process_mode = 3
+visible = false
+layout_mode = 0
+offset_left = 230.0
+offset_top = 49.0
+offset_right = 430.0
+offset_bottom = 299.0
+color = Color(0.329412, 0.545098, 0.337255, 1)
+
+[node name="lbl_result" type="Label" parent="GUILayer/GUI/DeathPanel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = -1.0
+offset_top = 15.0
+offset_right = 199.0
+offset_bottom = 70.0
+theme_override_fonts/font = ExtResource("6_r46ur")
+theme_override_font_sizes/font_size = 25
+text = "Result
+
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="snd_victory" type="AudioStreamPlayer" parent="GUILayer/GUI/DeathPanel"]
+unique_name_in_owner = true
+stream = ExtResource("10_jhb4q")
+volume_db = -10.578
+
+[node name="snd_loss" type="AudioStreamPlayer" parent="GUILayer/GUI/DeathPanel"]
+unique_name_in_owner = true
+stream = ExtResource("11_kibj6")
+volume_db = -5.645
+
+[node name="MainMenuBtnà2" type="Button" parent="GUILayer/GUI/DeathPanel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 19.0
+offset_top = 195.0
+offset_right = 181.0
+offset_bottom = 225.0
+theme_override_fonts/font = ExtResource("6_r46ur")
+text = "Main Menu"
+
+[node name="lblTimer" type="Label" parent="GUILayer/GUI"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -18.0
+offset_top = 25.0
+offset_right = 18.0
+offset_bottom = 42.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("6_r46ur")
+theme_override_font_sizes/font_size = 20
+text = "00:00"
+
+[node name="CollectedWeapons" type="GridContainer" parent="GUILayer/GUI"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 8.0
+offset_top = 24.0
+offset_right = 208.0
+offset_bottom = 40.0
+columns = 10
+
+[node name="CollectedUpgrades" type="GridContainer" parent="GUILayer/GUI"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 8.0
+offset_top = 40.0
+offset_right = 208.0
+offset_bottom = 56.0
+columns = 10
+
+[node name="SpearDmgLbl" type="Label" parent="GUILayer/GUI"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 4.0
+offset_top = 89.0
+offset_right = 44.0
+offset_bottom = 112.0
+
+[node name="MenuPanel" type="ColorRect" parent="GUILayer/GUI"]
+unique_name_in_owner = true
+process_mode = 2
+visible = false
+layout_mode = 0
+offset_left = 233.0
+offset_top = 48.0
+offset_right = 433.0
+offset_bottom = 298.0
+color = Color(0.329412, 0.545098, 0.337255, 1)
+
+[node name="MenuLbl" type="Label" parent="GUILayer/GUI/MenuPanel"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 4.0
+offset_right = 201.0
+offset_bottom = 44.0
+theme_override_fonts/font = ExtResource("6_r46ur")
+theme_override_font_sizes/font_size = 25
+text = "Paused"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuitBtn" type="Button" parent="GUILayer/GUI/MenuPanel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 20.0
+offset_top = 200.0
+offset_right = 182.0
+offset_bottom = 230.0
+theme_override_fonts/font = ExtResource("6_r46ur")
+text = "Quit"
+
+[node name="BackBtn" type="Button" parent="GUILayer/GUI/MenuPanel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 19.0
+offset_top = 63.0
+offset_right = 181.0
+offset_bottom = 93.0
+theme_override_fonts/font = ExtResource("6_r46ur")
+text = "Back to Game"
+
+[node name="MainMenuBtnà" type="Button" parent="GUILayer/GUI/MenuPanel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 20.0
+offset_top = 161.0
+offset_right = 182.0
+offset_bottom = 191.0
+theme_override_fonts/font = ExtResource("6_r46ur")
+text = "Main Menu"
+
+[node name="UnpauseTimer" type="Timer" parent="GUILayer/GUI/MenuPanel"]
+
+[node name="LevelChoices" type="ColorRect" parent="GUILayer/GUI"]
+visible = false
+layout_mode = 0
+offset_left = -1.0
+offset_right = 653.0
+offset_bottom = 364.0
+color = Color(0.329412, 0.545098, 0.337255, 1)
+
+[node name="Lvl1Btn" type="Button" parent="GUILayer/GUI/LevelChoices"]
+process_mode = 3
+layout_mode = 0
+offset_left = 246.0
+offset_top = 122.0
+offset_right = 404.0
+offset_bottom = 170.0
+text = "Grass Level"
+
+[node name="Lvl2Btn" type="Button" parent="GUILayer/GUI/LevelChoices"]
+process_mode = 3
+layout_mode = 0
+offset_left = 246.0
+offset_top = 182.0
+offset_right = 406.0
+offset_bottom = 231.0
+text = "Library Level"
+
+[node name="CharacterChoices" type="ColorRect" parent="GUILayer/GUI"]
+visible = false
+layout_mode = 0
+offset_left = -6.0
+offset_top = -3.0
+offset_right = 638.0
+offset_bottom = 361.0
+color = Color(0.329412, 0.545098, 0.337255, 1)
+
+[node name="GridContainer" type="GridContainer" parent="GUILayer/GUI/CharacterChoices"]
+layout_direction = 1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -208.0
+offset_top = -57.0
+offset_right = 208.0
+offset_bottom = 79.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 3
+
+[node name="warrior_btn" type="Button" parent="GUILayer/GUI/CharacterChoices/GridContainer"]
+process_mode = 3
+layout_mode = 2
+icon = ExtResource("12_305ob")
+
+[node name="sorceress_btn" type="Button" parent="GUILayer/GUI/CharacterChoices/GridContainer"]
+process_mode = 3
+layout_mode = 2
+icon = ExtResource("13_yq5rq")
+
+[node name="brute_btn" type="Button" parent="GUILayer/GUI/CharacterChoices/GridContainer"]
+process_mode = 3
+layout_mode = 2
+icon = ExtResource("14_hjf72")
+
+[node name="Label" type="Label" parent="GUILayer/GUI/CharacterChoices"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -92.0
+offset_top = 44.0
+offset_right = 92.0
+offset_bottom = 70.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("6_r46ur")
+theme_override_font_sizes/font_size = 25
+text = "Choose a Character"
+
+[node name="DashTimer" type="Timer" parent="."]
+wait_time = 0.75
+one_shot = true
+
+[node name="Dash" parent="." instance=ExtResource("12_wsret")]
+
+[connection signal="hurt" from="HurtBox" to="." method="_on_hurt_box_hurt"]
+[connection signal="timeout" from="Attack/IceSpearTimer" to="." method="_on_ice_spear_timer_timeout"]
+[connection signal="timeout" from="Attack/IceSpearTimer/IceSpearAttackTimer" to="." method="_on_ice_spear_attack_timer_timeout"]
+[connection signal="timeout" from="Attack/ShieldTimer" to="." method="_on_shield_timer_timeout"]
+[connection signal="timeout" from="Attack/ShieldTimer/ShieldAttackTimer" to="." method="_on_shield_attack_timer_timeout"]
+[connection signal="timeout" from="Attack/TornadoTimer" to="." method="_on_tornado_timer_timeout"]
+[connection signal="timeout" from="Attack/TornadoTimer/TornadoAttackTimer" to="." method="_on_tornado_attack_timer_timeout"]
+[connection signal="body_entered" from="EnemyDetecionArea" to="." method="_on_enemy_detecion_area_body_entered"]
+[connection signal="body_exited" from="EnemyDetecionArea" to="." method="_on_enemy_detecion_area_body_exited"]
+[connection signal="area_entered" from="GrabArea" to="." method="_on_grab_area_area_entered"]
+[connection signal="area_entered" from="CollectArea" to="." method="_on_collect_area_area_entered"]
+[connection signal="pressed" from="GUILayer/GUI/DeathPanel/MainMenuBtnà2" to="." method="_on_main_menu_btnà_pressed"]
+[connection signal="pressed" from="GUILayer/GUI/MenuPanel/QuitBtn" to="." method="_on_quit_btn_pressed"]
+[connection signal="pressed" from="GUILayer/GUI/MenuPanel/BackBtn" to="." method="_on_back_btn_pressed"]
+[connection signal="pressed" from="GUILayer/GUI/MenuPanel/MainMenuBtnà" to="." method="_on_main_menu_btnà_pressed"]
+[connection signal="timeout" from="GUILayer/GUI/MenuPanel/UnpauseTimer" to="." method="_on_unpause_timer_timeout"]
+[connection signal="pressed" from="GUILayer/GUI/LevelChoices/Lvl1Btn" to="." method="_on_lvl_1_btn_pressed"]
+[connection signal="pressed" from="GUILayer/GUI/LevelChoices/Lvl2Btn" to="." method="_on_lvl_2_btn_pressed"]
+[connection signal="pressed" from="GUILayer/GUI/CharacterChoices/GridContainer/warrior_btn" to="." method="_on_warrior_btn_pressed"]
+[connection signal="pressed" from="GUILayer/GUI/CharacterChoices/GridContainer/sorceress_btn" to="." method="_on_sorceress_btn_pressed"]
+[connection signal="pressed" from="GUILayer/GUI/CharacterChoices/GridContainer/brute_btn" to="." method="_on_brute_btn_pressed"]
+[connection signal="timeout" from="DashTimer" to="." method="_on_dash_timer_timeout"]
+
+[editable path="HurtBox"]

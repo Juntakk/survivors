@@ -1,0 +1,62 @@
+[gd_scene load_steps=3 format=3 uid="uid://bttj5o37yujjl"]
+
+[ext_resource type="FontFile" uid="uid://db6ido2fvnq48" path="res://Font/tenderness.otf" id="2_c7ag1"]
+
+[sub_resource type="GDScript" id="GDScript_tbl8h"]
+script/source = "extends Control
+
+
+func _on_play_button_pressed():
+	get_tree().change_scene_to_file(\"res://World/world.tscn\")
+
+
+func _on_quit_button_pressed():
+	get_tree().quit()
+"
+
+[node name="Menu" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 0
+offset_right = 636.0
+offset_bottom = 359.0
+script = SubResource("GDScript_tbl8h")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 638.0
+offset_bottom = 358.0
+color = Color(0.329794, 0.546394, 0.336865, 1)
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_right = 636.0
+offset_bottom = 102.0
+theme_override_fonts/font = ExtResource("2_c7ag1")
+theme_override_font_sizes/font_size = 60
+text = "Another Survivors"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="playButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 227.0
+offset_top = 155.0
+offset_right = 403.0
+offset_bottom = 204.0
+theme_override_fonts/font = ExtResource("2_c7ag1")
+theme_override_font_sizes/font_size = 30
+text = "Play"
+
+[node name="quitButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 226.0
+offset_top = 230.0
+offset_right = 401.0
+offset_bottom = 280.0
+theme_override_fonts/font = ExtResource("2_c7ag1")
+theme_override_font_sizes/font_size = 25
+text = "Quit"
+
+[connection signal="pressed" from="playButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="quitButton" to="." method="_on_quit_button_pressed"]
